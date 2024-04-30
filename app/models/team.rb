@@ -3,7 +3,8 @@ class Team < ApplicationRecord
   
 
 
-
-    has_many :employees
+    has_many :employee_teams
+    has_many :employees, through: :employee_teams
+ 
 
 end

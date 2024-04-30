@@ -37,6 +37,8 @@ gem "rack-cors"
 
 gem "jwt"
 
+gem "faker"
+
 group :production do 
   gem "pg"
 end
