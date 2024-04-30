@@ -8,6 +8,6 @@ Rails.application.routes.draw do
   # root "posts#index"
   root 'sessions#create'
   resources :users
-  #post 'login',to: 'sessions#create'
+  post 'login',to: 'sessions#create'
  
 end
