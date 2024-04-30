@@ -4,6 +4,6 @@ class Team < ApplicationRecord
 
 
 
-    has_many :employees, through: :employee_team
+    has_many :employees, through: :employee_teams
 
 end
