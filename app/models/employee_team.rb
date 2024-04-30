@@ -1,4 +1,5 @@
 class EmployeeTeam < ApplicationRecord
-    belongs_to :employees
+    belongs_to :employee
+    
     belongs_to :team
 end
