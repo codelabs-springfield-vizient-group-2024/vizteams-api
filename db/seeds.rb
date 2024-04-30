@@ -35,8 +35,16 @@ teams.each do |team|
     employee = Employee.create(
       first_name: first_name,
       last_name: last_name,
-      team: team,
+      
       job_title: title
     )
+    EmployeeTeam.create(
+        employee: employee,
+        team: team
+    )
+
+
+
   end
+
 end
