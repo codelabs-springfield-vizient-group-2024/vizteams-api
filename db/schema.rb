@@ -10,12 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_04_27_023313) do
+ActiveRecord::Schema[7.1].define(version: 2024_04_30_003654) do
   create_table "employee_teams", force: :cascade do |t|
     t.date "start_date"
     t.date "end_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "employee_id", null: false
+    t.integer "team_id", null: false
+    t.index ["employee_id"], name: "index_employee_teams_on_employee_id"
+    t.index ["team_id"], name: "index_employee_teams_on_team_id"
   end
 
   create_table "employees", force: :cascade do |t|
@@ -23,6 +27,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_27_023313) do
     t.string "last_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "job_title_id", null: false
+    t.index ["job_title_id"], name: "index_employees_on_job_title_id"
   end
 
   create_table "job_titles", force: :cascade do |t|
@@ -47,4 +53,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_27_023313) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "employee_teams", "employees"
+  add_foreign_key "employee_teams", "teams"
+  add_foreign_key "employees", "job_titles"
 end
