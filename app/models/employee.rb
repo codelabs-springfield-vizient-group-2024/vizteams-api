@@ -4,5 +4,5 @@ class Employee < ApplicationRecord
   
 
     belongs_to :job_title
-    belongs_to :team
+    has_many :teams, through: :employee_team
 end
