@@ -12,6 +12,18 @@ class TeamsController < ApplicationController
         render json: @current_team, status: :ok
     end
 
+    def team_emp
+      emp_teams=@current_team.employees
+      if emp_teams>0
+        render json: emp_teams,status: :ok
+      else
+        render json: {'error':"No member on the team"}
+      end
+    
+
+      
+    end
+
     # POST /teams
     def create
       team = Team.new(team_params)
