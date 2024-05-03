@@ -5,4 +5,5 @@ Rails.application.routes.draw do
   resources :users, only: [:show, :update, :destroy]
   resources :employees
   resources :teams
+  resources :employees_teams
 end

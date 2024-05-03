@@ -6,6 +6,11 @@ class EmployeesController < ApplicationController
         employees = Employee.all
         render json: employees, status: :ok
     end
+
+    # GET teams/:id/employees
+    def index
+        employee_team = Team.employee
+    end
     
     # GET /employees/:id
     def show
