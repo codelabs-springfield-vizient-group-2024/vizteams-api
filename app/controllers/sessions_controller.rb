@@ -2,7 +2,7 @@ class SessionsController < ApplicationController
   # POST /login
   def create
     user = User.find_by(email: params[:email])
-    if user&.authenticate()
+    if user&.authenticate(params[:password])
       token = jwt_encode(user_id: user.id)
       render json: { token: token }, status: :ok
     else
