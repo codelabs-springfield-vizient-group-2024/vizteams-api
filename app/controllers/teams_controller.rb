@@ -13,8 +13,9 @@ class TeamsController < ApplicationController
     end
 
     def team_emp
-      emp_teams=@current_team.employees
-      if emp_teams>0
+      team=Team.find(params[:id])
+      emp_teams=team.employees
+      if emp_teams.length>0
         render json: emp_teams,status: :ok
       else
         render json: {'error':"No member on the team"}
