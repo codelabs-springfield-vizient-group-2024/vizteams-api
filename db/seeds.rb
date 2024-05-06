@@ -40,7 +40,8 @@ teams.each do |team|
     )
     EmployeeTeam.create(
         employee: employee,
-        team: team
+        team: team,
+        start_date: Date.yesterday
     )
 
 
