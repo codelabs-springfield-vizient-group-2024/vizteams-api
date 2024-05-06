@@ -40,7 +40,9 @@ teams.each do |team|
     )
     EmployeeTeam.create(
         employee: employee,
-        team: team
+        team: team,
+        start_date: Date.yesterday,
+  end_date: Date.yesterday+ rand(30..90).days
     )
 
 
