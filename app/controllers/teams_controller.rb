@@ -4,7 +4,7 @@ class TeamsController < ApplicationController
     # GET /teams
     def index
         teams = Team.all
-        render json: teams, status: :ok
+        render json: TeamBlueprint.render(teams, view: :teams_list), status: :ok
     end
     
     # GET /teams/:id

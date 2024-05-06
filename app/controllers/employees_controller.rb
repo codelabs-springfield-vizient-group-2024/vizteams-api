@@ -9,7 +9,8 @@ class EmployeesController < ApplicationController
 
     # GET teams/:id/employees
     def index
-        employee_team = Team.employee
+        team_employees = Team.employee.all
+        render json: team_employees, status: :ok
     end
     
     # GET /employees/:id
@@ -45,6 +46,14 @@ class EmployeesController < ApplicationController
         render json: @current_employee.errors, status: :unprocessable_entity
       end
     end
+
+    def upload_image
+        if @current_employee.image.attach(params[:profile_image])
+          render json: { message: "Image uploaded" }, status: :ok
+        else
+          render json: { message: "Image upload failed" }, status: :unprocessable_entity
+        end
+    end
   
     private
 
@@ -53,6 +62,6 @@ class EmployeesController < ApplicationController
     end
   
     def employee_params
-      params.permit(:first_name, :last_name, :job_title)
+      params.permit(:first_name, :last_name, :job_title, :profile_image)
     end
 end
