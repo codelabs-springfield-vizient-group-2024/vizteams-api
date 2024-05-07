@@ -11,7 +11,31 @@ class TeamsController < ApplicationController
     def show
         render json: TeamBlueprint.render(@current_team, view: :teams_list), status: :ok
     end
-
+=begin
+    def team_emp
+      team=Team.find(params[:id])
+      emp_teams=team.employees
+      if emp_teams.length>0
+        render json: emp_teams,status: :ok
+      else
+        render json: {'error':"No member on the team"}
+      end      
+    end
+=end
+def team_emp
+  team=Team.find(params[:id])
+  emp_teams=team.employees
+  emps=[]
+  emp_teams.each do |emp|
+    emp_inf={
+      "first_name":emp.first_name,
+      'last_name':emp.last_name,
+      'job':emp.job_title
+    }
+    emps.push(emp_inf)
+    end
+    render json: emps,status: :ok
+end
     # POST /teams
     def create
       team = Team.new(team_params)

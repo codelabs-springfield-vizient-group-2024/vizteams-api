@@ -75,10 +75,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_06_032724) do
     t.string "first_name"
     t.string "last_name"
     t.string "email"
-    t.string "password"
-    t.string "password_confirmation"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "password_digest"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
