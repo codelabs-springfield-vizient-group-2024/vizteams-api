@@ -9,7 +9,7 @@ class TeamsController < ApplicationController
     
     # GET /teams/:id
     def show
-        render json: @current_team, status: :ok
+        render json: TeamBlueprint.render(@current_team, view: :teams_list), status: :ok
     end
 
     # POST /teams

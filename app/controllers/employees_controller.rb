@@ -8,9 +8,9 @@ class EmployeesController < ApplicationController
     end
 
     # GET teams/:id/employees
-    def index
-        team_employees = Team.employee.all
-        render json: team_employees, status: :ok
+    def team_employees
+        team = Team.find(params[:id])
+        render json: team.employees, status: :ok
     end
     
     # GET /employees/:id
