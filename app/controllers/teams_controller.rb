@@ -72,7 +72,7 @@ end
     end
   
     def team_params
-      params.permit(:name)
+      params.permit(:name,:description)
     end
   
 end
