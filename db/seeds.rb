@@ -38,14 +38,24 @@ teams.each do |team|
       
       job_title: title
     )
+    max_future_date = Date.today + 1.year
+
+    start_date_range = (6.months.ago.to_date..Date.yesterday)
+    
+    if rand(2).zero?
+      # Set an end date within the range
+      end_date = (5.months.ago.to_date..max_future_date).to_a.sample
+    else
+      # Set no end date
+      end_date = nil
+    end
+    
     EmployeeTeam.create(
-        employee: employee,
-        team: team,
-        start_date: Date.yesterday,
-  end_date: Date.yesterday+ rand(30..90).days
+      employee: employee,
+      team: team,
+      start_date: start_date_range.to_a.sample,
+      end_date: end_date
     )
-
-
 
   end
 
