@@ -6,6 +6,12 @@ class EmployeesController < ApplicationController
         employees = Employee.all
         render json: employees, status: :ok
     end
+
+    # GET teams/:id/employees
+    def team_employees
+        team = Team.find(params[:id])
+        render json: team.employees, status: :ok
+    end
     
     # GET /employees/:id
     def show
@@ -40,6 +46,14 @@ class EmployeesController < ApplicationController
         render json: @current_employee.errors, status: :unprocessable_entity
       end
     end
+
+    def upload_image
+        if @current_employee.image.attach(params[:profile_image])
+          render json: { message: "Image uploaded" }, status: :ok
+        else
+          render json: { message: "Image upload failed" }, status: :unprocessable_entity
+        end
+    end
   
     private
 
@@ -48,6 +62,6 @@ class EmployeesController < ApplicationController
     end
   
     def employee_params
-      params.permit(:first_name, :last_name, :job_title)
+      params.permit(:first_name, :last_name, :job_title, :profile_image)
     end
 end
