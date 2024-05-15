@@ -37,7 +37,7 @@ gem "rack-cors"
 gem "jwt"
 gem 'blueprinter'
 gem "faker"
-gem "blueprinter"
+
 
 group :production do 
   gem "pg"
