@@ -3,7 +3,7 @@ class TeamsController < ApplicationController
     
     # GET /teams
     def index
-        teams = Team.all
+        teams = Team.active
         render json: TeamBlueprint.render(teams, view: :teams_list), status: :ok
     end
     
@@ -64,6 +64,21 @@ end
         render json: @current_team.errors, status: :unprocessable_entity
       end
     end
+# SOFT DELETE
+    def soft_delete
+      @team = Team.find(params[:id])
+      if @team.update(is_deleted: true)
+        render json: @team, status: :ok
+      else
+        render json: @team.errors, status: :unprocessable_entity
+      end
+    end
+  end
+
+
+
+
+
   
     private
 
@@ -75,4 +90,4 @@ end
       params.permit(:name,:description)
     end
   
-end
+
