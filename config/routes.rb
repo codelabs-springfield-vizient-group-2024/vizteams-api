@@ -10,4 +10,5 @@ Rails.application.routes.draw do
   end
   resources :teams
   resources :employees_teams
+  resources :job_titles, only: [:index]
 end
