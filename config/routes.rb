@@ -10,4 +10,6 @@ Rails.application.routes.draw do
   end
   resources :teams
   resources :employees_teams
+
+  
 end
