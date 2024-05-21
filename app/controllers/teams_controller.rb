@@ -27,10 +27,15 @@ def team_emp
   emp_teams=team.employees
   emps=[]
   emp_teams.each do |emp|
+    
+    date=EmployeeTeam.where(employee_id:emp.id,end_date:nil)
+    next if (date.length==0)
     emp_inf={
       "first_name":emp.first_name,
       'last_name':emp.last_name,
-      'job':emp.job_title
+      'job_title':emp.job_title,
+      'start_date':date.first.start_date,
+      'end_date':date.first.end_date
     }
     emps.push(emp_inf)
     end
