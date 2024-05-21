@@ -29,6 +29,7 @@ def team_emp
   emp_teams.each do |emp|
     
     date=EmployeeTeam.where(employee_id:emp.id,end_date:nil)
+    next if (date.length==0)
     emp_inf={
       "first_name":emp.first_name,
       'last_name':emp.last_name,
