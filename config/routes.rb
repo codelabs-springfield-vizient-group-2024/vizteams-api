@@ -8,6 +8,8 @@ Rails.application.routes.draw do
   resources :employees do
     post 'upload_image', to: 'employees#upload_image'
   end
-  resources :teams
+  resources :teams do
+    put 'rearrange_employees', on: :member
+  end
   resources :employees_teams
 end
