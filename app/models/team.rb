@@ -7,8 +7,8 @@ class Team < ApplicationRecord
   
     # Associations
     has_many :employee_teams
-    has_many :employees, through: :employee_teams
-
+    # has_many :employees, through: :employee_teams
+    has_many :employees
     
 
     # Access start_date and end_date for team employees

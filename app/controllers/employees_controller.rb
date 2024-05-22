@@ -23,6 +23,7 @@ class EmployeesController < ApplicationController
       employee = Employee.new(employee_params)
   
       if employee.save
+        
         render json: employee, status: :created
       else
         render json: employee.errors, status: :unprocessable_entity
@@ -62,6 +63,8 @@ class EmployeesController < ApplicationController
     end
   
     def employee_params
-      params.permit(:first_name, :last_name, :profile_image, :job_title_id)
+      params.require(:employee).permit(:first_name, :last_name, :profile_image, :job_title_id, :team_id)
     end
+
+    
 end

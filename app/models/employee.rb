@@ -7,8 +7,9 @@ class Employee < ApplicationRecord
   
     # Associations
     belongs_to :job_title
+    belongs_to :team
     has_many :employee_teams
-    has_many :teams, through: :employee_teams
+    # has_many :teams, through: :employee_teams
     has_one_attached :profile_image
 
     def profile_image_url
