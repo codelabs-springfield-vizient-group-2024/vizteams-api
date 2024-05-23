@@ -110,5 +110,5 @@ end
       params.require(:team).permit(:id, :name, :description, employees_with_dates: [ :first_name, :last_name, :profile_image_url, :start_date, :end_date])
     end
 
-  end
+  
 
