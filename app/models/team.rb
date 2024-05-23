@@ -1,11 +1,16 @@
 class Team < ApplicationRecord
+
+
+    scope :active, -> { where(is_deleted: false) }
     # Validations
     validates :name, presence: true
   
     # Associations
     has_many :employee_teams
     has_many :employees, through: :employee_teams
+
     accepts_nested_attributes_for :employee_teams, allow_destroy: true
+
     # Access start_date and end_date for team employees
     def employees_with_dates
         employee_teams.includes(:employee).map do |employee_team|
@@ -14,5 +19,8 @@ class Team < ApplicationRecord
             employee_hash[:end_date] = employee_team.end_date
             employee_hash
         end
+    end
+    def soft_delete
+        update(is_deleted: true)
     end
 end
