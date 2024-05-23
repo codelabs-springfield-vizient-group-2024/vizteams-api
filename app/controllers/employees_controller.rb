@@ -20,10 +20,18 @@ class EmployeesController < ApplicationController
 
     # POST /employees
     def create
-      employee = Employee.new(employee_params)
+      employee = Employee.new(employee_params.except(:team_id))
   
       if employee.save
-        render json: employee, status: :created
+        team = Team.find(employee_params[:team_id])
+        employee_team = EmployeeTeam.new(employee: employee, team: team)
+
+        if employee_team.save
+          render json: employee, status: :created
+        else
+          render json: employee_team.errors, status: :unprocessable_entity
+        end
+
       else
         render json: employee.errors, status: :unprocessable_entity
       end
@@ -62,6 +70,6 @@ class EmployeesController < ApplicationController
     end
   
     def employee_params
-      params.permit(:first_name, :last_name, :profile_image, :job_title_id)
+      params.permit(:first_name, :last_name, :profile_image, :job_title_id, :team_id)
     end
 end
