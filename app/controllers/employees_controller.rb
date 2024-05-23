@@ -20,10 +20,10 @@ class EmployeesController < ApplicationController
 
     # POST /employees
     def create
-      employee = Employee.new(employee_params)
+      employee = Employee.new(employee_params.except(:team_id))
   
       if employee.save
-        team = Team.find(params[:team_id])
+        team = Team.find(employee_params[:team_id])
         employee_team = EmployeeTeam.new(employee: employee, team: team)
 
         if employee_team.save
