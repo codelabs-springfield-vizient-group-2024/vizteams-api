@@ -77,8 +77,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_16_231136) do
     t.string "first_name"
     t.string "last_name"
     t.string "email"
-    t.string "password"
-    t.string "password_confirmation"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "password_digest"
@@ -88,5 +86,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_16_231136) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "employee_teams", "employees"
   add_foreign_key "employee_teams", "teams"
+
   add_foreign_key "employees", "job_titles"
 end
