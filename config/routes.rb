@@ -11,5 +11,6 @@ Rails.application.routes.draw do
   resources :teams do
     put 'rearrange_employees', on: :member
   end
+  resources :teams
   resources :employees_teams
 end
