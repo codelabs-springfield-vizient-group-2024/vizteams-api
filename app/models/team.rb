@@ -9,7 +9,7 @@ class Team < ApplicationRecord
     has_many :employee_teams
     has_many :employees, through: :employee_teams
 
-    
+    accepts_nested_attributes_for :employee_teams, allow_destroy: true
 
     # Access start_date and end_date for team employees
     def employees_with_dates

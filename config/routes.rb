@@ -8,11 +8,15 @@ Rails.application.routes.draw do
   resources :employees do
     post 'upload_image', to: 'employees#upload_image'
   end
+  
   resources :teams do
     member do
+      put 'rearrange_employees'
       put 'soft_delete'
     end
   end
+  
   resources :employees_teams
   resources :job_titles, only: [:index]
 end
+

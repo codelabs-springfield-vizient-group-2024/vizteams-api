@@ -1,5 +1,5 @@
 class TeamsController < ApplicationController
-    before_action :set_team, only: [:show, :update, :destroy]
+    before_action :set_team, only: [:show, :update, :destroy,:rearrange_employees]
     
     # GET /teams
     def index
@@ -60,6 +60,17 @@ end
         render json: @current_team.errors, status: :unprocessable_entity
       end
     end
+
+    def rearrange_employees
+    if @current_team.update(team_params)
+      render json: @current_team, status: :ok
+    else
+      logger.error @current_team.errors.full_messages.join(", ")
+      render json: @current_team.errors, status: :unprocessable_entity
+    end
+    end
+
+
   
     # DELETE /teams/:id
     def destroy
@@ -88,11 +99,16 @@ end
     private
 
     def set_team
-        @current_team = Team.find(params[:id])
+      @current_team = Team.find_by(id: params[:id])
+      unless @current_team
+        render json: { error: 'Team not found' }, status: :not_found
+      end
     end
+    
   
     def team_params
-      params.permit(:name,:description)
+      params.require(:team).permit(:id, :name, :description, employees_with_dates: [ :first_name, :last_name, :profile_image_url, :start_date, :end_date])
     end
-  
+
+  end
 
