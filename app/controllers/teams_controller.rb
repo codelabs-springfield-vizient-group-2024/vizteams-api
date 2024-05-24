@@ -62,13 +62,22 @@ end
     end
 
     def rearrange_employees
-    if @current_team.update(team_params)
-      render json: @current_team, status: :ok
-    else
-      logger.error @current_team.errors.full_messages.join(", ")
-      render json: @current_team.errors, status: :unprocessable_entity
+      team = Team.find(params[:id])  # Assuming you're passing the team ID in the request
+      employee_ids = params[:employee_ids]
+    
+      # Use each_with_index to iterate over employee_ids and update sort_order
+      employee_ids.each_with_index do |employee_id, index|
+        # Find or create the EmployeeTeam record
+        employee_team = EmployeeTeam.find_or_initialize_by(team_id: team.id, employee_id: employee_id)
+        # Set the sort_order attribute
+        employee_team.sort_order = index + 1
+        # Save the record
+        employee_team.save!
+      end
+    
+      render json: team, status: :ok
     end
-    end
+    
 
 
   
