@@ -62,7 +62,11 @@ class EmployeesController < ApplicationController
           render json: { message: "Image upload failed" }, status: :unprocessable_entity
         end
     end
-  
+    
+    def profile_image_url
+      rails_blob_url(self.profile_image, only_path: false) if self.profile_image.attached?
+    end
+    
     private
 
     def set_employee
