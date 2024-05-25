@@ -62,12 +62,12 @@ end
     end
 
     def rearrange_employees
-      team = Team.find(params[:id])  # Assuming you're passing the team ID in the request
+      team = Team.find(params[:id])
       employee_ids = params[:employee_ids]
     
       # Use each_with_index to iterate over employee_ids and update sort_order
       employee_ids.each_with_index do |employee_id, index|
-        # Find or create the EmployeeTeam record
+        # Find or initialize the EmployeeTeam record
         employee_team = EmployeeTeam.find_or_initialize_by(team_id: team.id, employee_id: employee_id)
         # Set the sort_order attribute
         employee_team.sort_order = index + 1
@@ -75,7 +75,14 @@ end
         employee_team.save!
       end
     
-      render json: team, status: :ok
+      # Retrieve the reordered list of employees with job titles
+      reordered_employees = Employee.joins(:job_title)
+                                     .joins("INNER JOIN employee_teams ON employees.id = employee_teams.employee_id")
+                                     .where("employee_teams.team_id = ?", team.id)
+                                     .order("employee_teams.sort_order")
+                                     .select("employees.*, job_titles.title AS job_title")
+    
+      render json: reordered_employees, status: :ok
     end
     
 
