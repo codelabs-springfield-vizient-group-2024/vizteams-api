@@ -22,28 +22,49 @@ class TeamsController < ApplicationController
       end      
     end
 =end
+# def team_emp
+#   team = Team.find(params[:id])
+#   emp_teams = team.employees.joins(:employee_teams).order('employee_teams.sort_order')
+
+#   emps = []
+#   emp_teams.each do |emp|
+#     date = EmployeeTeam.where(employee_id: emp.id, end_date: nil)
+#     next if date.length == 0
+
+#     emp_inf = {
+#       "first_name": emp.first_name,
+#       'last_name': emp.last_name,
+    
+#       'job_title': emp.job_title,
+#       'start_date': date.first.start_date,
+#       'end_date': date.first.end_date
+#     }
+#     emps.push(emp_inf)
+#   end
+
+#   render json: emps, status: :ok
+# end
+
 def team_emp
   team = Team.find(params[:id])
-  emp_teams = team.employees.joins(:employee_teams).order('employee_teams.sort_order')
+  emp_teams = team.employee_teams.order(:sort_order).includes(employee: :job_title)
 
-  emps = []
-  emp_teams.each do |emp|
-    date = EmployeeTeam.where(employee_id: emp.id, end_date: nil)
-    next if date.length == 0
-
-    emp_inf = {
-      "first_name": emp.first_name,
-      'last_name': emp.last_name,
-    
-      'job_title': emp.job_title,
-      'start_date': date.first.start_date,
-      'end_date': date.first.end_date
+  emps = emp_teams.map do |emp_team|
+    emp = emp_team.employee
+    date = emp_team.end_date.nil? ? nil : { start_date: emp_team.start_date, end_date: emp_team.end_date }
+    {
+      id: emp.id,
+      first_name: emp.first_name,
+      last_name: emp.last_name,
+      profile_image_url: emp.profile_image_url,
+      job_title: emp.job_title.title, # Assuming you have a 'title' attribute in your JobTitle model
+      dates: date
     }
-    emps.push(emp_inf)
   end
 
-  render json: emps, status: :ok
+  render json: emps.compact, status: :ok
 end
+
 
     # POST /teams
     def create
