@@ -87,9 +87,58 @@ end
       end
     end
 
+    # def rearrange_employees
+    #   @team = Team.find(params[:id])
+    
+    #   params[:employees_with_dates].each_with_index do |employee_params, index|
+    #     employee_team = EmployeeTeam.find_by(team_id: @team.id, employee_id: employee_params[:id])
+    #     if employee_team
+    #       employee_team.update(
+    #         start_date: employee_params[:start_date], 
+    #         end_date: employee_params[:end_date], 
+    #         sort_order: index + 1
+    #       )
+    #     else
+    #       Rails.logger.warn "EmployeeTeam association not found for team_id: #{@team.id}, employee_id: #{employee_params[:id]}"
+    #     end
+    #   end
+    
+    #   @employees = @team.employees
+    #                     .joins(:job_title, :employee_teams)
+    #                     .select('employees.*, job_titles.title AS job_title_title, employee_teams.sort_order, employee_teams.start_date, employee_teams.end_date')
+    #                     .order('employee_teams.sort_order')
+    
+    #   render json: @employees, status: :ok
+    # end
+    # def rearrange_employees
+    #   @team = Team.find(params[:id])
+      
+    #   params[:employees_with_dates].each_with_index do |employee_params, index|
+    #     employee_team = EmployeeTeam.find_by(team_id: @team.id, employee_id: employee_params[:id])
+    #     if employee_team
+    #       employee_team.update(
+    #         start_date: employee_params[:start_date], 
+    #         end_date: employee_params[:end_date], 
+    #         sort_order: index + 1
+    #       )
+    #     else
+    #       Rails.logger.warn "EmployeeTeam association not found for team_id: #{@team.id}, employee_id: #{employee_params[:id]}"
+    #     end
+    #   end
+      
+    #   # Fetch employees with job title included
+    #   @employees = @team.employees
+    #                     .joins(:job_title, :employee_teams)
+    #                     .select('employees.*, job_titles.title AS job_title, employee_teams.sort_order, employee_teams.start_date, employee_teams.end_date')
+    #                     .order('employee_teams.sort_order')
+      
+    #   render json: @employees, status: :ok
+    # end
+    
     def rearrange_employees
       @team = Team.find(params[:id])
-    
+      
+      # Update the sort order and other details for each employee
       params[:employees_with_dates].each_with_index do |employee_params, index|
         employee_team = EmployeeTeam.find_by(team_id: @team.id, employee_id: employee_params[:id])
         if employee_team
@@ -102,16 +151,18 @@ end
           Rails.logger.warn "EmployeeTeam association not found for team_id: #{@team.id}, employee_id: #{employee_params[:id]}"
         end
       end
-    
-      @employees = @team.employees
-                        .joins(:job_title, :employee_teams)
-                        .select('employees.*, job_titles.title AS job_title_title, employee_teams.sort_order, employee_teams.start_date, employee_teams.end_date')
+      
+      # Fetch the updated list of employees with their job titles
+      @employees = @team.employee_teams
+                        .joins(employee: :job_title)
+                        .select('employees.id, employees.first_name, employees.last_name,  job_titles.title AS job_title, employee_teams.start_date, employee_teams.end_date')
                         .order('employee_teams.sort_order')
-    
+      
       render json: @employees, status: :ok
     end
     
     
+
 
 
   
