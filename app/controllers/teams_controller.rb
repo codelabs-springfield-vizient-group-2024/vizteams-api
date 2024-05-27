@@ -34,7 +34,8 @@ def team_emp
     emp_inf = {
       "first_name": emp.first_name,
       'last_name': emp.last_name,
-      'job_title': emp.job_title.title,
+    
+      'job_title': emp.job_title,
       'start_date': date.first.start_date,
       'end_date': date.first.end_date
     }
