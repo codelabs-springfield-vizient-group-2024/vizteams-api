@@ -23,24 +23,27 @@ class TeamsController < ApplicationController
     end
 =end
 def team_emp
-  team=Team.find(params[:id])
-  emp_teams=team.employees
-  emps=[]
+  team = Team.find(params[:id])
+  emp_teams = team.employees.joins(:employee_teams).order('employee_teams.sort_order')
+
+  emps = []
   emp_teams.each do |emp|
-    
-    date=EmployeeTeam.where(employee_id:emp.id,end_date:nil)
-    next if (date.length==0)
-    emp_inf={
-      "first_name":emp.first_name,
-      'last_name':emp.last_name,
-      'job_title':emp.job_title,
-      'start_date':date.first.start_date,
-      'end_date':date.first.end_date
+    date = EmployeeTeam.where(employee_id: emp.id, end_date: nil)
+    next if date.length == 0
+
+    emp_inf = {
+      "first_name": emp.first_name,
+      'last_name': emp.last_name,
+      'job_title': emp.job_title.title,
+      'start_date': date.first.start_date,
+      'end_date': date.first.end_date
     }
     emps.push(emp_inf)
-    end
-    render json: emps,status: :ok
+  end
+
+  render json: emps, status: :ok
 end
+
     # POST /teams
     def create
       team = Team.new(team_params)
@@ -62,28 +65,29 @@ end
     end
 
     def rearrange_employees
-      team = Team.find(params[:id])
-      employee_ids = params[:employee_ids]
+      @team = Team.find(params[:id])
     
-      # Use each_with_index to iterate over employee_ids and update sort_order
-      employee_ids.each_with_index do |employee_id, index|
-        # Find or initialize the EmployeeTeam record
-        employee_team = EmployeeTeam.find_or_initialize_by(team_id: team.id, employee_id: employee_id)
-        # Set the sort_order attribute
-        employee_team.sort_order = index + 1
-        # Save the record
-        employee_team.save!
+      params[:employees_with_dates].each_with_index do |employee_params, index|
+        employee_team = EmployeeTeam.find_by(team_id: @team.id, employee_id: employee_params[:id])
+        if employee_team
+          employee_team.update(
+            start_date: employee_params[:start_date], 
+            end_date: employee_params[:end_date], 
+            sort_order: index + 1
+          )
+        else
+          Rails.logger.warn "EmployeeTeam association not found for team_id: #{@team.id}, employee_id: #{employee_params[:id]}"
+        end
       end
     
-      # Retrieve the reordered list of employees with job titles
-      reordered_employees = Employee.joins(:job_title)
-                                     .joins("INNER JOIN employee_teams ON employees.id = employee_teams.employee_id")
-                                     .where("employee_teams.team_id = ?", team.id)
-                                     .order("employee_teams.sort_order")
-                                     .select("employees.*, job_titles.title AS job_title")
+      @employees = @team.employees
+                        .joins(:job_title, :employee_teams)
+                        .select('employees.*, job_titles.title AS job_title_title, employee_teams.sort_order, employee_teams.start_date, employee_teams.end_date')
+                        .order('employee_teams.sort_order')
     
-      render json: reordered_employees, status: :ok
+      render json: @employees, status: :ok
     end
+    
     
 
 
@@ -105,7 +109,7 @@ end
         render json: @team.errors, status: :unprocessable_entity
       end
     end
-  end
+  
 
 
 
@@ -125,6 +129,6 @@ end
     def team_params
       params.require(:team).permit(:id, :name, :description, employees_with_dates: [ :first_name, :last_name, :profile_image_url, :start_date, :end_date])
     end
-
+  end
   
 
