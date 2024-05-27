@@ -51,13 +51,14 @@ def team_emp
 
   emps = emp_teams.map do |emp_team|
     emp = emp_team.employee
+    job_title = emp.job_title.title if emp.job_title # Access job_title.title if job_title exists
     date = emp_team.end_date.nil? ? nil : { start_date: emp_team.start_date, end_date: emp_team.end_date }
     {
       id: emp.id,
       first_name: emp.first_name,
       last_name: emp.last_name,
       profile_image_url: emp.profile_image_url,
-      job_title: emp.job_title.title, # Assuming you have a 'title' attribute in your JobTitle model
+      job_title: job_title, # Assign job_title here
       dates: date
     }
   end
