@@ -22,25 +22,51 @@ class TeamsController < ApplicationController
       end      
     end
 =end
-def team_emp
-  team=Team.find(params[:id])
-  emp_teams=team.employees
-  emps=[]
-  emp_teams.each do |emp|
+# def team_emp
+#   team = Team.find(params[:id])
+#   emp_teams = team.employees.joins(:employee_teams).order('employee_teams.sort_order')
+
+#   emps = []
+#   emp_teams.each do |emp|
+#     date = EmployeeTeam.where(employee_id: emp.id, end_date: nil)
+#     next if date.length == 0
+
+#     emp_inf = {
+#       "first_name": emp.first_name,
+#       'last_name': emp.last_name,
     
-    date=EmployeeTeam.where(employee_id:emp.id,end_date:nil)
-    next if (date.length==0)
-    emp_inf={
-      "first_name":emp.first_name,
-      'last_name':emp.last_name,
-      'job_title':emp.job_title,
-      'start_date':date.first.start_date,
-      'end_date':date.first.end_date
+#       'job_title': emp.job_title,
+#       'start_date': date.first.start_date,
+#       'end_date': date.first.end_date
+#     }
+#     emps.push(emp_inf)
+#   end
+
+#   render json: emps, status: :ok
+# end
+
+def team_emp
+  team = Team.find(params[:id])
+  emp_teams = team.employee_teams.order(:sort_order).includes(employee: :job_title)
+
+  emps = emp_teams.map do |emp_team|
+    emp = emp_team.employee
+ 
+    date = emp_team.end_date.nil? ? nil : { start_date: emp_team.start_date, end_date: emp_team.end_date }
+    {
+      id: emp.id,
+      first_name: emp.first_name,
+      last_name: emp.last_name,
+      profile_image_url: emp.profile_image_url,
+      job_title: emp.job_title, # Assign job_title here
+      dates: date
     }
-    emps.push(emp_inf)
-    end
-    render json: emps,status: :ok
+  end
+
+  render json: emps.compact, status: :ok
 end
+
+
     # POST /teams
     def create
       team = Team.new(team_params)
@@ -61,23 +87,44 @@ end
       end
     end
 
-    def rearrange_employees
-      team = Team.find(params[:id])  # Assuming you're passing the team ID in the request
-      employee_ids = params[:employee_ids]
-    
-      # Use each_with_index to iterate over employee_ids and update sort_order
-      employee_ids.each_with_index do |employee_id, index|
-        # Find or create the EmployeeTeam record
-        employee_team = EmployeeTeam.find_or_initialize_by(team_id: team.id, employee_id: employee_id)
-        # Set the sort_order attribute
-        employee_team.sort_order = index + 1
-        # Save the record
-        employee_team.save!
+    def switch_teams
+      if @team.update(employee_ids: params[:employee_ids])
+        render json: @team, status: :ok
+      else
+        render json: @team.errors, status: :unprocessable_entity
       end
+    end
+
+   
     
-      render json: team, status: :ok
+    def rearrange_employees
+      @team = Team.find(params[:id])
+      
+      # Update the sort order and other details for each employee
+      params[:employees_with_dates].each_with_index do |employee_params, index|
+        employee_team = EmployeeTeam.find_by(team_id: @team.id, employee_id: employee_params[:id])
+        if employee_team
+          employee_team.update(
+            start_date: employee_params[:start_date], 
+            end_date: employee_params[:end_date], 
+            sort_order: index + 1
+          )
+        else
+          Rails.logger.warn "EmployeeTeam association not found for team_id: #{@team.id}, employee_id: #{employee_params[:id]}"
+        end
+      end
+      
+      # Fetch the updated list of employees with their job titles
+      @employees = @team.employee_teams
+                        .joins(employee: :job_title)
+                        .select('employees.id, employees.first_name, employees.last_name,  job_titles.title AS job_title, employee_teams.start_date, employee_teams.end_date')
+                        .order('employee_teams.sort_order')
+      
+      render json: @employees, status: :ok
     end
     
+    
+
 
 
   
@@ -98,7 +145,7 @@ end
         render json: @team.errors, status: :unprocessable_entity
       end
     end
-  end
+  
 
 
 
@@ -118,6 +165,6 @@ end
     def team_params
       params.require(:team).permit(:id, :name, :description, employees_with_dates: [ :first_name, :last_name, :profile_image_url, :start_date, :end_date])
     end
-
+  end
   
 
