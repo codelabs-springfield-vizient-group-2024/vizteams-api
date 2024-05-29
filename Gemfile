@@ -41,7 +41,7 @@ gem "faker"
 
 group :production do 
   gem "pg"
-  gem "cloudinary"
+  gem "cloudinary", "~>1.29.0"
 end
 
 group :development, :test do
