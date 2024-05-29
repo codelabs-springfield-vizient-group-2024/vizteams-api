@@ -13,6 +13,7 @@ Rails.application.routes.draw do
     member do
       put 'rearrange_employees'
       put 'soft_delete'
+      put 'switch_teams'
     end
   end
   
