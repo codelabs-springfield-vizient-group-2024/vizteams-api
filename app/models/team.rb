@@ -20,6 +20,17 @@ class Team < ApplicationRecord
             employee_hash
         end
     end
+
+    # Access active team employees
+    def employees_with_active_dates
+        employee_teams.where(end_date: nil).order(:sort_order).includes(:employee).map do |employee_team|
+            employee_hash = EmployeeBlueprint.render_as_hash(employee_team.employee)
+            employee_hash[:start_date] = employee_team.start_date
+            employee_hash[:end_date] = employee_team.end_date
+            employee_hash
+        end
+    end
+
     def soft_delete
         update(is_deleted: true)
     end
