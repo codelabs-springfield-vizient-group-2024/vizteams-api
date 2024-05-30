@@ -21,7 +21,11 @@ class EmployeesController < ApplicationController
     # POST /employees
     def create
       employee = Employee.new(employee_params.except(:team_id))
-  
+      
+      if employee_params[:profile_image].present?
+        employee.profile_image.attach(employee_params[:profile_image])
+      end
+
       if employee.save
         team = Team.find(employee_params[:team_id])
         employee_team = EmployeeTeam.new(employee: employee, team: team)
@@ -38,8 +42,39 @@ class EmployeesController < ApplicationController
     end
     
     # PUT /employees/:id
+    # def update
+    #   if @current_employee.update(employee_params)
+    #     render json: @current_employee, status: :ok
+    #   else
+    #     render json: @current_employee.errors, status: :unprocessable_entity
+    #   end
+    # end
+  
+    # # DELETE /employees/:id
+    # def destroy
+    #   if @current_employee.destroy
+    #     render json: nil, status: :ok
+    #   else
+    #     render json: @current_employee.errors, status: :unprocessable_entity
+    #   end
+    # end
+
+    # def upload_image
+    #     if @current_employee.image.attach(params[:profile_image])
+    #       render json: { message: "Image uploaded" }, status: :ok
+    #     else
+    #       render json: { message: "Image upload failed" }, status: :unprocessable_entity
+    #     end
+    # end
+    
+    # def profile_image_url
+    #   rails_blob_url(self.profile_image, only_path: false) if self.profile_image.attached?
+    # end
     def update
-      if @current_employee.update(employee_params)
+      if @current_employee.update(employee_params.except(:profile_image))
+        if employee_params[:profile_image].present?
+          @current_employee.profile_image.attach(employee_params[:profile_image])
+        end
         render json: @current_employee, status: :ok
       else
         render json: @current_employee.errors, status: :unprocessable_entity
@@ -54,19 +89,18 @@ class EmployeesController < ApplicationController
         render json: @current_employee.errors, status: :unprocessable_entity
       end
     end
-
+  
     def upload_image
-        if @current_employee.image.attach(params[:profile_image])
-          render json: { message: "Image uploaded" }, status: :ok
-        else
-          render json: { message: "Image upload failed" }, status: :unprocessable_entity
-        end
+      if @current_employee.image.attach(params[:profile_image])
+        render json: { message: "Image uploaded" }, status: :ok
+      else
+        render json: { message: "Image upload failed" }, status: :unprocessable_entity
+      end
     end
     
     def profile_image_url
       rails_blob_url(self.profile_image, only_path: false) if self.profile_image.attached?
     end
-    
     private
 
     def set_employee
