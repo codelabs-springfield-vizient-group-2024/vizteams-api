@@ -101,7 +101,7 @@ end
       @team = Team.find(params[:id])
       
       # Update the sort order and other details for each employee
-      params[:employees_with_dates].each_with_index do |employee_params, index|
+      params[:employees_with_active_dates].each_with_index do |employee_params, index|
         employee_team = EmployeeTeam.find_by(team_id: @team.id, employee_id: employee_params[:id])
         if employee_team
           employee_team.update(
